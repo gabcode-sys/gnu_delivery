@@ -22,6 +22,8 @@ class _ItemSelectorState
   Widget build(BuildContext context) {
     controller.searchProductById(widget.productParams['restaurantId'],
         widget.productParams['productId']);
+    controller.getProductAditionals(widget.productParams['restaurantId'],
+        widget.productParams['productId']);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -272,69 +274,93 @@ class _ItemSelectorState
                             color: UIThemeColors.blackTheme,
                           ),
                         ),
-                        SizedBox(
-                          height: 20.0,
-                        ),
-                        ListTile(
-                          leading: CircleAvatar(),
-                          title: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Carne Bovina 240g',
-                                style: TextStyle(
-                                  fontSize: 12.0,
-                                ),
-                              ),
-                              Text(
-                                'Indisponível',
-                                style: TextStyle(
-                                  color: UIThemeColors.greyTheme,
-                                  fontSize: 9.0,
-                                ),
-                              ),
-                              Text(
-                                'R\$ 2.50,00',
-                                style: TextStyle(
-                                  fontSize: 12.0,
-                                  color: Colors.green,
-                                ),
-                              ),
-                            ],
-                          ),
-                          trailing: Container(
-                            width: 110.0,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                IconButton(
-                                  iconSize: 13,
-                                  splashRadius: 18,
-                                  icon: Icon(Icons.remove_rounded),
-                                  onPressed: () {},
-                                ),
-                                Text(
-                                  '01',
-                                  style: TextStyle(
-                                    fontSize: 12.0,
-                                  ),
-                                ),
-                                IconButton(
-                                  iconSize: 13,
-                                  splashRadius: 18,
-                                  icon: Icon(Icons.add_rounded),
-                                  onPressed: () {},
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                          child: Divider(
-                            color: Colors.grey.shade200,
-                          ),
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: ListView.builder(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              itemCount: controller.productAditionalInfo.length,
+                              shrinkWrap: true,
+                              primary: false,
+                              itemBuilder: (BuildContext context, int index) {
+                                List<dynamic> avaiability = controller
+                                    .productAditionalInfo[index]
+                                    .availability
+                                    .entries
+                                    .map((entry) => entry.value)
+                                    .toList();
+                                var availabilityStatus = avaiability[0];
+                                return Column(
+                                  children: [
+                                    ListTile(
+                                      leading: CircleAvatar(),
+                                      title: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            controller
+                                                .productAditionalInfo[index]
+                                                .title,
+                                            style: TextStyle(
+                                              fontSize: 12.0,
+                                            ),
+                                          ),
+                                          Text(
+                                            availabilityStatus,
+                                            style: TextStyle(
+                                              color: UIThemeColors.greyTheme,
+                                              fontSize: 9.0,
+                                            ),
+                                          ),
+                                          Text(
+                                            'R\$ ${controller.productAditionalInfo[index].price}',
+                                            style: TextStyle(
+                                              fontSize: 12.0,
+                                              color: Colors.green,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: Container(
+                                        width: 110.0,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            IconButton(
+                                              iconSize: 13,
+                                              splashRadius: 18,
+                                              icon: Icon(Icons.remove_rounded),
+                                              onPressed: () {},
+                                            ),
+                                            Text(
+                                              '01',
+                                              style: TextStyle(
+                                                fontSize: 12.0,
+                                              ),
+                                            ),
+                                            IconButton(
+                                              iconSize: 13,
+                                              splashRadius: 18,
+                                              icon: Icon(Icons.add_rounded),
+                                              onPressed: () {},
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 8.0, right: 8.0),
+                                      child: Divider(
+                                        color: Colors.grey.shade200,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }),
                         ),
                       ],
                     ),

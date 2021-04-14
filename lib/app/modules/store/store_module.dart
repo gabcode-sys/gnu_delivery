@@ -1,4 +1,5 @@
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:gnu_delivery/app/modules/store/domain/usecases/get_product_aditionals.dart';
 import 'package:gnu_delivery/app/modules/store/domain/usecases/search_product_by_id.dart';
 import 'package:gnu_delivery/app/modules/store/domain/usecases/search_restaurant_by_id.dart';
 import 'package:gnu_delivery/app/modules/store/external/datasource/firebase_datasource.dart';
@@ -27,6 +28,7 @@ class StoreModule extends ChildModule {
         $GetProductCategoriesImpl,
         $SearchProductByCategoryImpl,
         $SearchProductByIdImpl,
+        $GetProductAditionalsImpl,
         $ConnectivityServiceImpl,
         $FlutterConnectivityDriver,
       ];

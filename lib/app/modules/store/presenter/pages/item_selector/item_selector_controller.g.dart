@@ -7,7 +7,8 @@ part of 'item_selector_controller.dart';
 // **************************************************************************
 
 final $ItemSelectorController = BindInject(
-  (i) => ItemSelectorController(i<SearchProductById>()),
+  (i) =>
+      ItemSelectorController(i<SearchProductById>(), i<GetProductAditionals>()),
   singleton: true,
   lazy: true,
 );
@@ -34,6 +35,38 @@ mixin _$ItemSelectorController on ControllerBase, Store {
     });
   }
 
+  final _$productAditionalInfoAtom =
+      Atom(name: 'ControllerBase.productAditionalInfo');
+
+  @override
+  ObservableList<ProductAditionalInfo> get productAditionalInfo {
+    _$productAditionalInfoAtom.reportRead();
+    return super.productAditionalInfo;
+  }
+
+  @override
+  set productAditionalInfo(ObservableList<ProductAditionalInfo> value) {
+    _$productAditionalInfoAtom.reportWrite(value, super.productAditionalInfo,
+        () {
+      super.productAditionalInfo = value;
+    });
+  }
+
+  final _$itemCountAtom = Atom(name: 'ControllerBase.itemCount');
+
+  @override
+  int get itemCount {
+    _$itemCountAtom.reportRead();
+    return super.itemCount;
+  }
+
+  @override
+  set itemCount(int value) {
+    _$itemCountAtom.reportWrite(value, super.itemCount, () {
+      super.itemCount = value;
+    });
+  }
+
   final _$searchProductByIdAsyncAction =
       AsyncAction('ControllerBase.searchProductById');
 
@@ -46,7 +79,9 @@ mixin _$ItemSelectorController on ControllerBase, Store {
   @override
   String toString() {
     return '''
-productInfo: ${productInfo}
+productInfo: ${productInfo},
+productAditionalInfo: ${productAditionalInfo},
+itemCount: ${itemCount}
     ''';
   }
 }

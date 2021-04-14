@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:gnu_delivery/app/modules/store/domain/entities/product_aditional_info.dart';
 import 'package:gnu_delivery/app/modules/store/domain/entities/product_category.dart';
 import 'package:gnu_delivery/app/modules/store/domain/entities/product_category_info.dart';
 import 'package:gnu_delivery/app/modules/store/domain/entities/product_info.dart';
@@ -14,4 +15,6 @@ abstract class RestaurantRepository {
       {int productCategory, int restaurantId});
   Future<Either<Failure, List<ProductInfo>>> searchProductbyId(
       {int productId, int restaurantId});
+  Future<Either<Failure, List<ProductAditionalInfo>>> getProductAditionals(
+      {int restaurantId, int productId});
 }

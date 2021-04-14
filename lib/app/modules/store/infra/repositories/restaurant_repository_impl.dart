@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:gnu_delivery/app/modules/store/domain/entities/product_aditional_info.dart';
 import 'package:gnu_delivery/app/modules/store/domain/entities/product_category_info.dart';
 import 'package:gnu_delivery/app/modules/store/domain/entities/product_info.dart';
 import 'package:gnu_delivery/app/modules/store/domain/entities/restaurant_info.dart';
@@ -58,6 +59,18 @@ class RestaurantRepositoryImpl implements RestaurantRepository {
       var product =
           await restaurantDataSource.searchProductbyId(productId, restaurantId);
       return Right(product);
+    } catch (e) {
+      return Left(ErrorNotFound(message: "Objeto não encontrado"));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<ProductAditionalInfo>>> getProductAditionals(
+      {int restaurantId, int productId}) async {
+    try {
+      var productAditionals = await restaurantDataSource.getProductAditionals(
+          restaurantId: restaurantId, productId: productId);
+      return Right(productAditionals);
     } catch (e) {
       return Left(ErrorNotFound(message: "Objeto não encontrado"));
     }

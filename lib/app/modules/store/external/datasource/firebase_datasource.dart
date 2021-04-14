@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:gnu_delivery/app/modules/store/infra/datasources/restaurant_datasource.dart';
+import 'package:gnu_delivery/app/modules/store/infra/models/product_aditional_model.dart';
 import 'package:gnu_delivery/app/modules/store/infra/models/product_category_model.dart';
 import 'package:gnu_delivery/app/modules/store/infra/models/product_model.dart';
 import 'package:gnu_delivery/app/modules/store/infra/models/restaurant_model.dart';
@@ -82,7 +83,6 @@ class FirebaseDataSourceImpl implements RestaurantDataSource {
     documents.docs
         .map((DocumentSnapshot documentSnapshot) => documentSnapshot)
         .forEach((doc) {
-      
       productList.add(
         ProductModel(
           productId: doc.get('product_id'),
@@ -131,5 +131,38 @@ class FirebaseDataSourceImpl implements RestaurantDataSource {
     });
 
     return productList;
+  }
+
+  @override
+  Future<List<ProductAditionalModel>> getProductAditionals(
+      {int restaurantId, int productId}) async {
+    List<ProductAditionalModel> aditionalList = new List();
+
+    QuerySnapshot documents = await Future.value(FirebaseFirestore.instance
+        .collection('restaurants')
+        .doc(restaurantId.toString())
+        .collection('products')
+        .doc(productId.toString())
+        .collection('aditionals')
+        .get());
+    print(documents.docs.first.data());
+    documents.docs
+        .map((DocumentSnapshot documentSnapshot) => documentSnapshot)
+        .forEach((doc) {
+      aditionalList.add(
+        ProductAditionalModel(
+          aditionalId: doc.get('aditional_id'),
+          availability: doc.get('availability'),
+          icon: doc.get('icon'),
+          maxCount: (doc.get('maxCount') ?? 0).toDouble(),
+          price: (doc.get('price') ?? 0).toDouble(),
+          productId: doc.get('product_id'),
+          restaurantId: doc.get('restaurant_id'),
+          title: doc.get('title'),
+        ),
+      );
+    });
+
+    return aditionalList;
   }
 }
