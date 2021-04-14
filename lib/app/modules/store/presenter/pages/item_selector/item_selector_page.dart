@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:gnu_delivery/app/modules/store/domain/entities/product_aditional_info.dart';
+import 'package:gnu_delivery/app/modules/store/infra/models/product_aditional_model.dart';
 import 'package:gnu_delivery/app/modules/store/presenter/pages/item_selector/item_selector_controller.dart';
 import 'package:gnu_delivery/app/modules/store/presenter/widgets/caroussel_selector.dart';
 import 'package:gnu_delivery/app/utils/theme/color_theme.dart';
@@ -17,6 +19,7 @@ class _ItemSelectorState
     extends ModularState<ItemSelector, ItemSelectorController> {
   CarousselSelector _carousselSelector = new CarousselSelector();
   int selectedProductType = 0;
+  Map<String, Map<String, dynamic>> selectedAditionals = {};
 
   @override
   Widget build(BuildContext context) {
@@ -288,7 +291,11 @@ class _ItemSelectorState
                                     .entries
                                     .map((entry) => entry.value)
                                     .toList();
+
                                 var availabilityStatus = avaiability[0];
+
+                                print(controller.productAditionalInfo[index]);
+
                                 return Column(
                                   children: [
                                     ListTile(
@@ -333,10 +340,51 @@ class _ItemSelectorState
                                               iconSize: 13,
                                               splashRadius: 18,
                                               icon: Icon(Icons.remove_rounded),
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                bool existAD = selectedAditionals
+                                                    .containsKey(controller
+                                                        .productAditionalInfo[
+                                                            index]
+                                                        .aditionalId
+                                                        .toString());
+                                                if (!existAD) {
+                                                  selectedAditionals.addAll({
+                                                    controller
+                                                        .productAditionalInfo[
+                                                            index]
+                                                        .aditionalId
+                                                        .toString(): {
+                                                      'qtd': 1,
+                                                    }
+                                                  });
+                                                } else {
+                                                  if (selectedAditionals[controller
+                                                          .productAditionalInfo[
+                                                              index]
+                                                          .aditionalId
+                                                          .toString()]['qtd'] >
+                                                      0) {
+                                                    selectedAditionals[controller
+                                                            .productAditionalInfo[
+                                                                index]
+                                                            .aditionalId
+                                                            .toString()]
+                                                        .update('qtd', (value) {
+                                                      return value - 1;
+                                                    });
+                                                  }
+                                                }
+
+                                                setState(() {});
+                                              },
                                             ),
                                             Text(
-                                              '01',
+                                              selectedAditionals[controller
+                                                      .productAditionalInfo[
+                                                          index]
+                                                      .aditionalId
+                                                      .toString()]['qtd']
+                                                  .toString(),
                                               style: TextStyle(
                                                 fontSize: 12.0,
                                               ),
@@ -345,7 +393,46 @@ class _ItemSelectorState
                                               iconSize: 13,
                                               splashRadius: 18,
                                               icon: Icon(Icons.add_rounded),
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                bool existAD = selectedAditionals
+                                                    .containsKey(controller
+                                                        .productAditionalInfo[
+                                                            index]
+                                                        .aditionalId
+                                                        .toString());
+                                                if (!existAD) {
+                                                  selectedAditionals.addAll({
+                                                    controller
+                                                        .productAditionalInfo[
+                                                            index]
+                                                        .aditionalId
+                                                        .toString(): {
+                                                      'qtd': 1,
+                                                    }
+                                                  });
+                                                } else {
+                                                  if (selectedAditionals[controller
+                                                          .productAditionalInfo[
+                                                              index]
+                                                          .aditionalId
+                                                          .toString()]['qtd'] <
+                                                      controller
+                                                          .productAditionalInfo[
+                                                              index]
+                                                          .maxCount) {
+                                                    selectedAditionals[controller
+                                                            .productAditionalInfo[
+                                                                index]
+                                                            .aditionalId
+                                                            .toString()]
+                                                        .update('qtd', (value) {
+                                                      return value + 1;
+                                                    });
+                                                  }
+                                                }
+
+                                                setState(() {});
+                                              },
                                             ),
                                           ],
                                         ),
