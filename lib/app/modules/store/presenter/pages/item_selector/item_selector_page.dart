@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:gnu_delivery/app/modules/store/domain/entities/product_aditional_info.dart';
-import 'package:gnu_delivery/app/modules/store/infra/models/product_aditional_model.dart';
 import 'package:gnu_delivery/app/modules/store/presenter/pages/item_selector/item_selector_controller.dart';
 import 'package:gnu_delivery/app/modules/store/presenter/widgets/caroussel_selector.dart';
 import 'package:gnu_delivery/app/utils/theme/color_theme.dart';
@@ -379,12 +377,19 @@ class _ItemSelectorState
                                               },
                                             ),
                                             Text(
-                                              selectedAditionals[controller
-                                                      .productAditionalInfo[
-                                                          index]
-                                                      .aditionalId
-                                                      .toString()]['qtd']
-                                                  .toString(),
+                                              selectedAditionals.containsKey(
+                                                      controller
+                                                          .productAditionalInfo[
+                                                              index]
+                                                          .aditionalId
+                                                          .toString())
+                                                  ? selectedAditionals[controller
+                                                          .productAditionalInfo[
+                                                              index]
+                                                          .aditionalId
+                                                          .toString()]['qtd']
+                                                      .toString()
+                                                  : '0',
                                               style: TextStyle(
                                                 fontSize: 12.0,
                                               ),
@@ -543,28 +548,32 @@ class _ItemSelectorState
               borderRadius: BorderRadius.circular(18.0),
               color: UIThemeColors.orangeTheme,
             ),
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Adicionar ao carrinho por ',
-                    style: TextStyle(
-                      fontSize: 13.0,
-                      fontWeight: FontWeight.bold,
-                      color: UIThemeColors.whiteTheme,
+            child: Observer(builder: (_) {
+              return RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Adicionar ao carrinho por ',
+                      style: TextStyle(
+                        fontSize: 13.0,
+                        fontWeight: FontWeight.bold,
+                        color: UIThemeColors.whiteTheme,
+                      ),
                     ),
-                  ),
-                  TextSpan(
-                    text: 'R\$ 5.59',
-                    style: TextStyle(
-                      fontSize: 13.0,
-                      fontWeight: FontWeight.bold,
-                      color: UIThemeColors.whiteTheme,
+                    TextSpan(
+                      text: controller.productInfo.length == 0
+                          ? ''
+                          : 'R\$ ${controller.productInfo.first.price.toString()}',
+                      style: TextStyle(
+                        fontSize: 13.0,
+                        fontWeight: FontWeight.bold,
+                        color: UIThemeColors.whiteTheme,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
+                  ],
+                ),
+              );
+            }),
           ),
         ),
       ),
