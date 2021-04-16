@@ -7,8 +7,12 @@ part of 'item_selector_controller.dart';
 // **************************************************************************
 
 final $ItemSelectorController = BindInject(
-  (i) => ItemSelectorController(i<SearchProductById>(),
-      i<GetProductAditionals>(), i<CreateNewOrder>(), i<AuthStore>()),
+  (i) => ItemSelectorController(
+      i<SearchProductById>(),
+      i<GetProductAditionals>(),
+      i<CreateNewOrder>(),
+      i<GetOpenedOrder>(),
+      i<AuthStore>()),
   singleton: true,
   lazy: true,
 );
@@ -85,11 +89,20 @@ mixin _$ItemSelectorController on ControllerBase, Store {
         .run(() => super.getProductAditionals(restaurantId, productId));
   }
 
+  final _$getOpenedOrderAsyncAction =
+      AsyncAction('ControllerBase.getOpenedOrder');
+
+  @override
+  Future<OrderInfo> getOpenedOrder(int restaurantId) {
+    return _$getOpenedOrderAsyncAction
+        .run(() => super.getOpenedOrder(restaurantId));
+  }
+
   final _$createNewOrderAsyncAction =
       AsyncAction('ControllerBase.createNewOrder');
 
   @override
-  Future createNewOrder(int restaurantId) {
+  Future<OrderInfo> createNewOrder(int restaurantId) {
     return _$createNewOrderAsyncAction
         .run(() => super.createNewOrder(restaurantId));
   }

@@ -13,4 +13,5 @@ abstract class RestaurantDataSource {
   Future<List<ProductAditionalModel>> getProductAditionals(
       {int restaurantId, int productId});
   Future<OrderModel> createNewOrder({int restaurantId, dynamic userId});
+  Future<OrderModel> getOpenedOrder({int restaurantId, dynamic userId});
 }

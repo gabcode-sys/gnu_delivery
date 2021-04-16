@@ -20,4 +20,6 @@ abstract class RestaurantRepository {
       {int restaurantId, int productId});
   Future<Either<Failure, OrderInfo>> createNewOrder(
       {int restaurantId, dynamic userId});
+  Future<Either<Failure, OrderInfo>> getOpenedOrder(
+      {int restaurantId, dynamic userId});
 }

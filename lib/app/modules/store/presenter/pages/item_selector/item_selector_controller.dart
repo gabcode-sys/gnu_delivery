@@ -5,6 +5,7 @@ import 'package:gnu_delivery/app/modules/store/domain/entities/product_aditional
 import 'package:gnu_delivery/app/modules/store/domain/entities/product_info.dart';
 import 'package:gnu_delivery/app/modules/store/domain/errors/errors.dart';
 import 'package:gnu_delivery/app/modules/store/domain/usecases/create_new_order.dart';
+import 'package:gnu_delivery/app/modules/store/domain/usecases/get_opened_order.dart';
 import 'package:gnu_delivery/app/modules/store/domain/usecases/get_product_aditionals.dart';
 import 'package:gnu_delivery/app/modules/store/domain/usecases/search_product_by_id.dart';
 import 'package:mobx/mobx.dart';
@@ -18,11 +19,13 @@ abstract class ControllerBase with Store {
   final SearchProductById searchProductByIdUseCase;
   final GetProductAditionals getProductAditionalsUseCase;
   final CreateNewOrder createNewOrderUseCase;
+  final GetOpenedOrder getOpenedOrderUseCase;
   final AuthStore authStore;
   ControllerBase(
     this.searchProductByIdUseCase,
     this.getProductAditionalsUseCase,
     this.createNewOrderUseCase,
+    this.getOpenedOrderUseCase,
     this.authStore,
   );
 
@@ -79,23 +82,46 @@ abstract class ControllerBase with Store {
   }
 
   @action
-  createNewOrder(int restaurantId) async {
+  Future<OrderInfo> getOpenedOrder(int restaurantId) async {
     var result =
-        await createNewOrderUseCase(restaurantId, authStore.user.phoneNumber);
-    result.fold((failure) {
+        await getOpenedOrderUseCase(restaurantId, authStore.user.phoneNumber);
+    return result.fold((failure) {
       if (failure is ErrorNotFound) {
         // Error
+        return null;
       } else if (failure is ConnectionError) {
         // Go to Offline Screen
         Modular.to.pushNamed('/connection_error');
+        return null;
       } else {
         // Another error
+        return null;
       }
-    }, (orderModel) {
+    }, (orderInfo) {
       // Sucessful, do anything
-      return true;
+      return orderInfo;
     });
-    return false;
+  }
+
+  @action
+  Future<OrderInfo> createNewOrder(int restaurantId) async {
+    var result =
+        await createNewOrderUseCase(restaurantId, authStore.user.phoneNumber);
+    return result.fold((failure) {
+      if (failure is ErrorNotFound) {
+        // Error
+        return null;
+      } else if (failure is ConnectionError) {
+        // Go to Offline Screen
+        Modular.to.pushNamed('/connection_error');
+        return null;
+      } else {
+        return null;
+      }
+    }, (OrderInfo orderInfo) {
+      // Sucessful, do anything
+      return orderInfo;
+    });
   }
 
   @action

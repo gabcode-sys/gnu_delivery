@@ -88,4 +88,16 @@ class RestaurantRepositoryImpl implements RestaurantRepository {
       return Left(ErrorNotFound(message: "Objeto não encontrado"));
     }
   }
+
+  @override
+  Future<Either<Failure, OrderInfo>> getOpenedOrder(
+      {int restaurantId, userId}) async {
+    try {
+      var openedOrder = await restaurantDataSource.getOpenedOrder(
+          restaurantId: restaurantId, userId: userId);
+      return Right(openedOrder);
+    } catch (e) {
+      return Left(ErrorNotFound(message: "Objeto não encontrado"));
+    }
+  }
 }

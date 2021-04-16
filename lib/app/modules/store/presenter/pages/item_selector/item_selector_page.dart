@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:gnu_delivery/app/modules/store/domain/entities/order_info.dart';
 import 'package:gnu_delivery/app/modules/store/presenter/pages/item_selector/item_selector_controller.dart';
 import 'package:gnu_delivery/app/modules/store/presenter/widgets/caroussel_selector.dart';
 import 'package:gnu_delivery/app/utils/theme/color_theme.dart';
@@ -539,8 +540,15 @@ class _ItemSelectorState
           ],
         ),
         child: GestureDetector(
-          onTap: () {
-            controller.createNewOrder(widget.productParams["restaurantId"]);
+          onTap: () async {
+            OrderInfo orderInfo = await controller
+                .getOpenedOrder(widget.productParams['restaurantId']);
+            if (orderInfo == null)
+              orderInfo = await controller
+                  .createNewOrder(widget.productParams["restaurantId"]);
+
+            //Create order item
+
             Modular.to.pop();
           },
           child: Container(

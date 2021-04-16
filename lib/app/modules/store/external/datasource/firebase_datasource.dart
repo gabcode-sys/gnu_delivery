@@ -169,7 +169,35 @@ class FirebaseDataSourceImpl implements RestaurantDataSource {
 
   @override
   Future<OrderModel> createNewOrder({int restaurantId, dynamic userId}) async {
-    /* Check if exists a opened order */
+    String collection = "orders";
+    String userOrderStatus = "A";
+
+    DocumentReference documentReference = FirebaseFirestore.instance
+        .collection('restaurants')
+        .doc(restaurantId.toString())
+        .collection(collection)
+        .doc();
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction.set(documentReference, {
+        'order_id': documentReference.id,
+        'user_order_status': userOrderStatus,
+        'user_id': userId,
+        'restaurant_id': restaurantId,
+      });
+    }).catchError((e) {
+      return null;
+    });
+
+    return new OrderModel(
+      orderId: documentReference.id,
+      userId: userId,
+      restaurantId: restaurantId,
+      userOrderStatus: userOrderStatus,
+    );
+  }
+
+  @override
+  Future<OrderModel> getOpenedOrder({int restaurantId, userId}) async {
     QuerySnapshot existingOrder;
 
     try {
@@ -182,38 +210,14 @@ class FirebaseDataSourceImpl implements RestaurantDataSource {
             .where('user_id', isEqualTo: userId)
             .get(),
       );
-    } catch (e) {
-      // There is still no order registered for the user, do nothing
-    }
-
-    /* Create a new order case not exists a opened order*/
-
-    if (existingOrder.docs.isEmpty) {
-      String collection = "orders";
-      String userOrderStatus = "A";
-
-      DocumentReference documentReference = FirebaseFirestore.instance
-          .collection('restaurants')
-          .doc(restaurantId.toString())
-          .collection(collection)
-          .doc();
-      FirebaseFirestore.instance.runTransaction((transaction) async {
-        transaction.set(documentReference, {
-          'order_id': documentReference.id,
-          'user_order_status': userOrderStatus,
-          'user_id': userId,
-          'restaurant_id': restaurantId,
-        });
-      }).catchError((e) {
-        return null;
-      });
-
       return new OrderModel(
-        orderId: documentReference.id,
+        orderId: existingOrder.docs.first.id,
         userId: userId,
         restaurantId: restaurantId,
-        userOrderStatus: userOrderStatus,
+        userOrderStatus: 'A',
       );
+    } catch (e) {
+      return null;
     }
   }
 }
