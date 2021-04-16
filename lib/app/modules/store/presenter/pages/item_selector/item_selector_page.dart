@@ -539,7 +539,10 @@ class _ItemSelectorState
           ],
         ),
         child: GestureDetector(
-          onTap: () {},
+          onTap: () {
+            controller.createNewOrder(widget.productParams["restaurantId"]);
+            Modular.to.pop();
+          },
           child: Container(
             alignment: Alignment.center,
             width: MediaQuery.of(context).size.width,

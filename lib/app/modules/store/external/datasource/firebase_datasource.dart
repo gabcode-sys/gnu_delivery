@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:gnu_delivery/app/modules/store/infra/datasources/restaurant_datasource.dart';
+import 'package:gnu_delivery/app/modules/store/infra/models/order_model.dart';
 import 'package:gnu_delivery/app/modules/store/infra/models/product_aditional_model.dart';
 import 'package:gnu_delivery/app/modules/store/infra/models/product_category_model.dart';
 import 'package:gnu_delivery/app/modules/store/infra/models/product_model.dart';
@@ -164,5 +165,55 @@ class FirebaseDataSourceImpl implements RestaurantDataSource {
     });
 
     return aditionalList;
+  }
+
+  @override
+  Future<OrderModel> createNewOrder({int restaurantId, dynamic userId}) async {
+    /* Check if exists a opened order */
+    QuerySnapshot existingOrder;
+
+    try {
+      existingOrder = await Future.value(
+        FirebaseFirestore.instance
+            .collection('restaurants')
+            .doc(restaurantId.toString())
+            .collection('orders')
+            .where('user_order_status', isEqualTo: "A")
+            .where('user_id', isEqualTo: userId)
+            .get(),
+      );
+    } catch (e) {
+      // There is still no order registered for the user, do nothing
+    }
+
+    /* Create a new order case not exists a opened order*/
+
+    if (existingOrder.docs.isEmpty) {
+      String collection = "orders";
+      String userOrderStatus = "A";
+
+      DocumentReference documentReference = FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(restaurantId.toString())
+          .collection(collection)
+          .doc();
+      FirebaseFirestore.instance.runTransaction((transaction) async {
+        transaction.set(documentReference, {
+          'order_id': documentReference.id,
+          'user_order_status': userOrderStatus,
+          'user_id': userId,
+          'restaurant_id': restaurantId,
+        });
+      }).catchError((e) {
+        return null;
+      });
+
+      return new OrderModel(
+        orderId: documentReference.id,
+        userId: userId,
+        restaurantId: restaurantId,
+        userOrderStatus: userOrderStatus,
+      );
+    }
   }
 }

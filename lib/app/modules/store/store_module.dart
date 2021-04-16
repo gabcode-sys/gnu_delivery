@@ -10,6 +10,7 @@ import 'package:gnu_delivery/app/modules/store/presenter/pages/item_selector/ite
 import 'package:gnu_delivery/app/modules/store/presenter/pages/store/store_page.dart';
 import 'package:gnu_delivery/app/modules/store/presenter/pages/store/store_page_controller.dart';
 
+import 'domain/usecases/create_new_order.dart';
 import 'domain/usecases/get_product_categories.dart';
 import 'domain/usecases/search_product_by_category.dart';
 import 'presenter/pages/item_selector/item_selector_controller.dart';
@@ -29,6 +30,7 @@ class StoreModule extends ChildModule {
         $SearchProductByCategoryImpl,
         $SearchProductByIdImpl,
         $GetProductAditionalsImpl,
+        $CreateNewOrderImpl,
         $ConnectivityServiceImpl,
         $FlutterConnectivityDriver,
       ];

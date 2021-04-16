@@ -7,8 +7,8 @@ part of 'item_selector_controller.dart';
 // **************************************************************************
 
 final $ItemSelectorController = BindInject(
-  (i) =>
-      ItemSelectorController(i<SearchProductById>(), i<GetProductAditionals>()),
+  (i) => ItemSelectorController(i<SearchProductById>(),
+      i<GetProductAditionals>(), i<CreateNewOrder>(), i<AuthStore>()),
   singleton: true,
   lazy: true,
 );
@@ -74,6 +74,33 @@ mixin _$ItemSelectorController on ControllerBase, Store {
   Future searchProductById(int restaurantId, int productId) {
     return _$searchProductByIdAsyncAction
         .run(() => super.searchProductById(restaurantId, productId));
+  }
+
+  final _$getProductAditionalsAsyncAction =
+      AsyncAction('ControllerBase.getProductAditionals');
+
+  @override
+  Future getProductAditionals(int restaurantId, int productId) {
+    return _$getProductAditionalsAsyncAction
+        .run(() => super.getProductAditionals(restaurantId, productId));
+  }
+
+  final _$createNewOrderAsyncAction =
+      AsyncAction('ControllerBase.createNewOrder');
+
+  @override
+  Future createNewOrder(int restaurantId) {
+    return _$createNewOrderAsyncAction
+        .run(() => super.createNewOrder(restaurantId));
+  }
+
+  final _$createNewOrderItemAsyncAction =
+      AsyncAction('ControllerBase.createNewOrderItem');
+
+  @override
+  Future createNewOrderItem() {
+    return _$createNewOrderItemAsyncAction
+        .run(() => super.createNewOrderItem());
   }
 
   @override

@@ -1,15 +1,18 @@
 import 'package:equatable/equatable.dart';
-import 'package:gnu_delivery/app/modules/store/domain/entities/product_info.dart';
 
 class Order extends Equatable {
-  final int orderId;
-  final Map<String, dynamic> userOrderStatus;
-  final Map<String, dynamic> restaurantOrderStatus;
+  final dynamic orderId;
+  final String userOrderStatus;
+  final String restaurantOrderStatus;
+  final dynamic userId;
+  final int restaurantId;
 
   const Order({
     this.orderId,
     this.userOrderStatus,
     this.restaurantOrderStatus,
+    this.userId,
+    this.restaurantId,
   });
 
   @override
@@ -17,5 +20,7 @@ class Order extends Equatable {
         orderId,
         userOrderStatus,
         restaurantOrderStatus,
+        userId,
+        restaurantId,
       ];
 }
