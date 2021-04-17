@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:gnu_delivery/app/modules/store/domain/entities/order_info.dart';
+import 'package:gnu_delivery/app/modules/store/domain/entities/order_item_info.dart';
 import 'package:gnu_delivery/app/modules/store/presenter/pages/item_selector/item_selector_controller.dart';
 import 'package:gnu_delivery/app/modules/store/presenter/widgets/caroussel_selector.dart';
 import 'package:gnu_delivery/app/utils/theme/color_theme.dart';
@@ -18,6 +19,7 @@ class _ItemSelectorState
     extends ModularState<ItemSelector, ItemSelectorController> {
   CarousselSelector _carousselSelector = new CarousselSelector();
   int selectedProductType = 0;
+  List<dynamic> categoryList;
   Map<String, Map<String, dynamic>> selectedAditionals = {};
 
   @override
@@ -238,7 +240,7 @@ class _ItemSelectorState
                           width: MediaQuery.of(context).size.width,
                           child: Observer(
                             builder: (_) {
-                              List<dynamic> categoryList = controller
+                              categoryList = controller
                                   .productInfo[0].type.entries
                                   .map((entry) => entry.value)
                                   .toList();
@@ -344,15 +346,13 @@ class _ItemSelectorState
                                                     .containsKey(controller
                                                         .productAditionalInfo[
                                                             index]
-                                                        .aditionalId
-                                                        .toString());
+                                                        .title);
                                                 if (!existAD) {
                                                   selectedAditionals.addAll({
                                                     controller
                                                         .productAditionalInfo[
                                                             index]
-                                                        .aditionalId
-                                                        .toString(): {
+                                                        .title: {
                                                       'qtd': 1,
                                                     }
                                                   });
@@ -360,14 +360,12 @@ class _ItemSelectorState
                                                   if (selectedAditionals[controller
                                                           .productAditionalInfo[
                                                               index]
-                                                          .aditionalId
-                                                          .toString()]['qtd'] >
+                                                          .title]['qtd'] >
                                                       0) {
                                                     selectedAditionals[controller
                                                             .productAditionalInfo[
                                                                 index]
-                                                            .aditionalId
-                                                            .toString()]
+                                                            .title]
                                                         .update('qtd', (value) {
                                                       return value - 1;
                                                     });
@@ -382,13 +380,11 @@ class _ItemSelectorState
                                                       controller
                                                           .productAditionalInfo[
                                                               index]
-                                                          .aditionalId
-                                                          .toString())
+                                                          .title)
                                                   ? selectedAditionals[controller
                                                           .productAditionalInfo[
                                                               index]
-                                                          .aditionalId
-                                                          .toString()]['qtd']
+                                                          .title]['qtd']
                                                       .toString()
                                                   : '0',
                                               style: TextStyle(
@@ -404,15 +400,13 @@ class _ItemSelectorState
                                                     .containsKey(controller
                                                         .productAditionalInfo[
                                                             index]
-                                                        .aditionalId
-                                                        .toString());
+                                                        .title);
                                                 if (!existAD) {
                                                   selectedAditionals.addAll({
                                                     controller
                                                         .productAditionalInfo[
                                                             index]
-                                                        .aditionalId
-                                                        .toString(): {
+                                                        .title: {
                                                       'qtd': 1,
                                                     }
                                                   });
@@ -420,8 +414,7 @@ class _ItemSelectorState
                                                   if (selectedAditionals[controller
                                                           .productAditionalInfo[
                                                               index]
-                                                          .aditionalId
-                                                          .toString()]['qtd'] <
+                                                          .title]['qtd'] <
                                                       controller
                                                           .productAditionalInfo[
                                                               index]
@@ -429,8 +422,7 @@ class _ItemSelectorState
                                                     selectedAditionals[controller
                                                             .productAditionalInfo[
                                                                 index]
-                                                            .aditionalId
-                                                            .toString()]
+                                                            .title]
                                                         .update('qtd', (value) {
                                                       return value + 1;
                                                     });
@@ -493,6 +485,12 @@ class _ItemSelectorState
                   Padding(
                     padding: const EdgeInsets.all(30.0),
                     child: TextField(
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        color: UIThemeColors.blackTheme,
+                      ),
+                      controller: controller.textEditingController,
+                      onChanged: controller.setOrderObservation(),
                       decoration: InputDecoration(
                         hintText:
                             'Ex.: Tirar a cebola, pouco  bacon, carne ao ponto etc.',
@@ -539,54 +537,64 @@ class _ItemSelectorState
             ),
           ],
         ),
-        child: GestureDetector(
-          onTap: () async {
-            OrderInfo orderInfo = await controller
-                .getOpenedOrder(widget.productParams['restaurantId']);
-            if (orderInfo == null)
-              orderInfo = await controller
-                  .createNewOrder(widget.productParams["restaurantId"]);
-
-            //Create order item
-
-            Modular.to.pop();
-          },
-          child: Container(
-            alignment: Alignment.center,
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18.0),
-              color: UIThemeColors.orangeTheme,
-            ),
-            child: Observer(builder: (_) {
-              return RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: 'Adicionar ao carrinho por ',
-                      style: TextStyle(
-                        fontSize: 13.0,
-                        fontWeight: FontWeight.bold,
-                        color: UIThemeColors.whiteTheme,
-                      ),
-                    ),
-                    TextSpan(
-                      text: controller.productInfo.length == 0
-                          ? ''
-                          : 'R\$ ${controller.productInfo.first.price.toString()}',
-                      style: TextStyle(
-                        fontSize: 13.0,
-                        fontWeight: FontWeight.bold,
-                        color: UIThemeColors.whiteTheme,
-                      ),
-                    ),
-                  ],
-                ),
+        child: Observer(builder: (_) {
+          return GestureDetector(
+            onTap: () async {
+              OrderInfo orderInfo = await controller
+                  .getOpenedOrder(widget.productParams['restaurantId']);
+              if (orderInfo == null)
+                orderInfo = await controller
+                    .createNewOrder(widget.productParams["restaurantId"]);
+              controller.createNewOrderItem(
+                orderId: orderInfo.orderId,
+                restaurantId: orderInfo.restaurantId,
+                productId: controller.productInfo.first.productId,
+                name: controller.productInfo.first.name,
+                count: controller.itemCount,
+                type: categoryList[selectedProductType],
+                observation: controller.orderObservation,
+                aditionals: selectedAditionals,
               );
-            }),
-          ),
-        ),
+
+              Modular.to.pop();
+            },
+            child: Container(
+              alignment: Alignment.center,
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18.0),
+                color: UIThemeColors.orangeTheme,
+              ),
+              child: Observer(builder: (_) {
+                return RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Adicionar ao carrinho por ',
+                        style: TextStyle(
+                          fontSize: 13.0,
+                          fontWeight: FontWeight.bold,
+                          color: UIThemeColors.whiteTheme,
+                        ),
+                      ),
+                      TextSpan(
+                        text: controller.productInfo.length == 0
+                            ? ''
+                            : 'R\$ ${controller.productInfo.first.price.toString()}',
+                        style: TextStyle(
+                          fontSize: 13.0,
+                          fontWeight: FontWeight.bold,
+                          color: UIThemeColors.whiteTheme,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+            ),
+          );
+        }),
       ),
     );
   }

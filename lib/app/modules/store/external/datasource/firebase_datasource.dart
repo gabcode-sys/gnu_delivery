@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:gnu_delivery/app/modules/store/infra/datasources/restaurant_datasource.dart';
+import 'package:gnu_delivery/app/modules/store/infra/models/order_item_model.dart';
 import 'package:gnu_delivery/app/modules/store/infra/models/order_model.dart';
 import 'package:gnu_delivery/app/modules/store/infra/models/product_aditional_model.dart';
 import 'package:gnu_delivery/app/modules/store/infra/models/product_category_model.dart';
@@ -219,5 +220,57 @@ class FirebaseDataSourceImpl implements RestaurantDataSource {
     } catch (e) {
       return null;
     }
+  }
+
+  @override
+  Future<OrderItemModel> createNewOrderItem({
+    dynamic orderId,
+    int productId,
+    dynamic userId,
+    int restaurantId,
+    String name,
+    int count,
+    String type,
+    Map<String, Map<String, dynamic>> aditionals,
+    String observation,
+  }) async {
+    String collection = "items";
+
+    DocumentReference documentReference = FirebaseFirestore.instance
+        .collection('restaurants')
+        .doc(restaurantId.toString())
+        .collection('orders')
+        .doc(orderId.toString())
+        .collection(collection)
+        .doc();
+
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction.set(documentReference, {
+        'order_id': orderId,
+        'item_id': documentReference.id,
+        'product_id': productId,
+        'user_id': userId,
+        'restaurant_id': restaurantId,
+        'name': name,
+        'count': count,
+        'type': type,
+        'aditionals': aditionals,
+        'observation': observation,
+      });
+    }).catchError((e) {
+      return null;
+    });
+    return new OrderItemModel(
+      orderId: orderId,
+      count: count,
+      itemId: documentReference.id,
+      productId: productId,
+      restaurantId: restaurantId,
+      type: type,
+      userId: userId,
+      aditionals: aditionals,
+      name: name,
+      observation: observation,
+    );
   }
 }

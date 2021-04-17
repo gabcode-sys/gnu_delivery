@@ -396,6 +396,14 @@ class _StorePageState extends ModularState<StorePage, StorePageController> {
               ],
             );
           }),
+      floatingActionButton: FloatingActionButton(
+        elevation: 0,
+        backgroundColor: UIThemeColors.orangeTheme,
+        child: Icon(
+          Icons.shopping_cart,
+          color: UIThemeColors.whiteTheme,
+        ),
+      ),
     );
   }
 }

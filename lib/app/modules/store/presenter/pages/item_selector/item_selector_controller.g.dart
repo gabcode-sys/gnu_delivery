@@ -12,6 +12,7 @@ final $ItemSelectorController = BindInject(
       i<GetProductAditionals>(),
       i<CreateNewOrder>(),
       i<GetOpenedOrder>(),
+      i<CreateNewOrderItem>(),
       i<AuthStore>()),
   singleton: true,
   lazy: true,
@@ -24,6 +25,21 @@ final $ItemSelectorController = BindInject(
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$ItemSelectorController on ControllerBase, Store {
+  final _$orderObservationAtom = Atom(name: 'ControllerBase.orderObservation');
+
+  @override
+  String get orderObservation {
+    _$orderObservationAtom.reportRead();
+    return super.orderObservation;
+  }
+
+  @override
+  set orderObservation(String value) {
+    _$orderObservationAtom.reportWrite(value, super.orderObservation, () {
+      super.orderObservation = value;
+    });
+  }
+
   final _$productInfoAtom = Atom(name: 'ControllerBase.productInfo');
 
   @override
@@ -111,14 +127,46 @@ mixin _$ItemSelectorController on ControllerBase, Store {
       AsyncAction('ControllerBase.createNewOrderItem');
 
   @override
-  Future createNewOrderItem() {
-    return _$createNewOrderItemAsyncAction
-        .run(() => super.createNewOrderItem());
+  Future<OrderItemInfo> createNewOrderItem(
+      {dynamic orderId,
+      dynamic itemId,
+      int productId,
+      int restaurantId,
+      String name,
+      int count,
+      String type,
+      Map<String, Map<String, dynamic>> aditionals,
+      String observation}) {
+    return _$createNewOrderItemAsyncAction.run(() => super.createNewOrderItem(
+        orderId: orderId,
+        itemId: itemId,
+        productId: productId,
+        restaurantId: restaurantId,
+        name: name,
+        count: count,
+        type: type,
+        aditionals: aditionals,
+        observation: observation));
+  }
+
+  final _$ControllerBaseActionController =
+      ActionController(name: 'ControllerBase');
+
+  @override
+  dynamic setOrderObservation() {
+    final _$actionInfo = _$ControllerBaseActionController.startAction(
+        name: 'ControllerBase.setOrderObservation');
+    try {
+      return super.setOrderObservation();
+    } finally {
+      _$ControllerBaseActionController.endAction(_$actionInfo);
+    }
   }
 
   @override
   String toString() {
     return '''
+orderObservation: ${orderObservation},
 productInfo: ${productInfo},
 productAditionalInfo: ${productAditionalInfo},
 itemCount: ${itemCount}

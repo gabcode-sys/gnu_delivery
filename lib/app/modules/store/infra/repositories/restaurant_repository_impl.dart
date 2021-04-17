@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:gnu_delivery/app/modules/store/domain/entities/order_info.dart';
+import 'package:gnu_delivery/app/modules/store/domain/entities/order_item_info.dart';
 import 'package:gnu_delivery/app/modules/store/domain/entities/product_aditional_info.dart';
 import 'package:gnu_delivery/app/modules/store/domain/entities/product_category_info.dart';
 import 'package:gnu_delivery/app/modules/store/domain/entities/product_info.dart';
@@ -96,6 +97,36 @@ class RestaurantRepositoryImpl implements RestaurantRepository {
       var openedOrder = await restaurantDataSource.getOpenedOrder(
           restaurantId: restaurantId, userId: userId);
       return Right(openedOrder);
+    } catch (e) {
+      return Left(ErrorNotFound(message: "Objeto não encontrado"));
+    }
+  }
+
+  @override
+  Future<Either<Failure, OrderItemInfo>> createNewOrderItem({
+    dynamic orderId,
+    int productId,
+    dynamic userId,
+    int restaurantId,
+    String name,
+    int count,
+    String type,
+    Map<String, Map<String, dynamic>> aditionals,
+    String observation,
+  }) async {
+    try {
+      var orderItem = await restaurantDataSource.createNewOrderItem(
+        orderId: orderId,
+        productId: productId,
+        userId: userId,
+        restaurantId: restaurantId,
+        name: name,
+        count: count,
+        type: type,
+        aditionals: aditionals,
+        observation: observation,
+      );
+      return Right(orderItem);
     } catch (e) {
       return Left(ErrorNotFound(message: "Objeto não encontrado"));
     }

@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:gnu_delivery/app/modules/home/presenter/pages/user/user_controller.dart';
 import 'package:gnu_delivery/app/modules/home/presenter/widgets/userGeneralOption.dart';
 import 'package:gnu_delivery/app/utils/theme/color_theme.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-class User extends StatelessWidget {
+class User extends StatefulWidget {
+  @override
+  _UserState createState() => _UserState();
+}
+
+class _UserState extends ModularState<User, UserController> {
   @override
   Widget build(BuildContext context) {
     UserGeneralOption _userGeneralOption = UserGeneralOption(context: context);
@@ -131,7 +138,7 @@ class User extends StatelessWidget {
                   width: MediaQuery.of(context).size.width,
                   child: GestureDetector(
                     onTap: () {
-                      // Sair
+                      controller.doLogout();
                     },
                     child: Container(
                       width: 50.0,

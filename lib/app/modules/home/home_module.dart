@@ -6,6 +6,7 @@ import 'package:gnu_delivery/app/modules/home/external/datasource/firebase_datas
 import 'package:gnu_delivery/app/modules/home/external/drivers/flutter_connectivity_driver_impl.dart';
 import 'package:gnu_delivery/app/modules/home/infra/repositories/restaurant_category_repository_impl.dart';
 import 'package:gnu_delivery/app/modules/home/infra/repositories/restaurant_repository_impl.dart';
+import 'package:gnu_delivery/app/modules/home/presenter/pages/user/user_controller.dart';
 
 import 'domain/usecases/search_restaurant_by_category.dart';
 import 'infra/services/connectivity_service_impl.dart';
@@ -25,6 +26,7 @@ class HomeModule extends ChildModule {
         $GetCategoriesImpl,
         $SearchRestaurantByCategoryImpl,
         $MoreSearchedController,
+        $UserController,
         $ConnectivityServiceImpl,
         $FlutterConnectivityDriver,
       ];
