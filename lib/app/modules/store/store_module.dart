@@ -8,6 +8,7 @@ import 'package:gnu_delivery/app/modules/store/external/datasource/firebase_data
 import 'package:gnu_delivery/app/modules/store/external/drivers/flutter_connectivity_driver_impl.dart';
 import 'package:gnu_delivery/app/modules/store/infra/repositories/restaurant_repository_impl.dart';
 import 'package:gnu_delivery/app/modules/store/infra/services/connectivity_service_impl.dart';
+import 'package:gnu_delivery/app/modules/store/presenter/pages/cart/cart_controller.dart';
 import 'package:gnu_delivery/app/modules/store/presenter/pages/item_selector/item_selector_page.dart';
 import 'package:gnu_delivery/app/modules/store/presenter/pages/store/store_page.dart';
 import 'package:gnu_delivery/app/modules/store/presenter/pages/store/store_page_controller.dart';
@@ -15,6 +16,7 @@ import 'package:gnu_delivery/app/modules/store/presenter/pages/store/store_page_
 import 'domain/usecases/create_new_order.dart';
 import 'domain/usecases/get_product_categories.dart';
 import 'domain/usecases/search_product_by_category.dart';
+import 'presenter/pages/cart/cart_page.dart';
 import 'presenter/pages/item_selector/item_selector_controller.dart';
 
 class StoreModule extends ChildModule {
@@ -27,6 +29,7 @@ class StoreModule extends ChildModule {
   List<Bind> get binds => [
         $StorePageController,
         $ItemSelectorController,
+        $CartController,
         $SearchRestaurantByIdImpl,
         $GetProductCategoriesImpl,
         $SearchProductByCategoryImpl,
@@ -45,6 +48,10 @@ class StoreModule extends ChildModule {
         ModularRouter(
           "/item_selector",
           child: (context, args) => ItemSelector(productParams: args.data),
+        ),
+        ModularRouter(
+          "/cart",
+          child: (context, args) => Cart(),
         ),
       ];
 }

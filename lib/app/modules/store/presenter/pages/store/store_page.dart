@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:gnu_delivery/app/modules/store/presenter/widgets/item.dart';
 import 'package:gnu_delivery/app/modules/store/presenter/widgets/caroussel_selector.dart';
 import 'package:gnu_delivery/app/utils/theme/color_theme.dart';
@@ -396,13 +397,84 @@ class _StorePageState extends ModularState<StorePage, StorePageController> {
               ],
             );
           }),
-      floatingActionButton: FloatingActionButton(
-        elevation: 0,
+      floatingActionButton: SpeedDial(
+        icon: Icons.shopping_cart_rounded,
+        visible: true,
+        overlayColor: Colors.black,
+        overlayOpacity: 0.0,
+        tooltip: 'Carrinho de Compras',
+        heroTag: 'cart',
         backgroundColor: UIThemeColors.orangeTheme,
-        child: Icon(
-          Icons.shopping_cart,
-          color: UIThemeColors.whiteTheme,
-        ),
+        foregroundColor: UIThemeColors.whiteTheme,
+        elevation: 0.0,
+        shape: CircleBorder(),
+        children: [
+          SpeedDialChild(
+            child: Icon(Icons.shopping_bag),
+            backgroundColor: UIThemeColors.orangeTheme,
+            labelBackgroundColor: Colors.white,
+            elevation: 8.0,
+            labelWidget: Container(
+              padding: const EdgeInsets.only(
+                top: 8.0,
+                bottom: 8.0,
+                left: 15.0,
+                right: 15.0,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25.0),
+                color: UIThemeColors.whiteTheme,
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 20.0,
+                    color: Colors.grey.shade200,
+                    offset: Offset(0, 0),
+                  ),
+                ],
+              ),
+              child: Text(
+                'Lista',
+                style: TextStyle(
+                  fontSize: 12.0,
+                ),
+              ),
+            ),
+            onTap: () => Modular.to.pushNamed(
+              "/store_module/cart",
+            ),
+          ),
+          SpeedDialChild(
+            child: Icon(Icons.close),
+            backgroundColor: Colors.deepPurple,
+            labelBackgroundColor: Colors.white,
+            elevation: 8.0,
+            labelWidget: Container(
+              padding: const EdgeInsets.only(
+                top: 8.0,
+                bottom: 8.0,
+                left: 15.0,
+                right: 15.0,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25.0),
+                color: UIThemeColors.whiteTheme,
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 20.0,
+                    color: Colors.grey.shade200,
+                    offset: Offset(0, 0),
+                  ),
+                ],
+              ),
+              child: Text(
+                'Finalizar Pedido',
+                style: TextStyle(
+                  fontSize: 12.0,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
