@@ -26,4 +26,6 @@ abstract class RestaurantDataSource {
     Map<String, Map<String, dynamic>> aditionals,
     String observation,
   });
+  Future<List<OrderItemModel>> getItemsOfCart(
+      {int restaurantId, dynamic userId, dynamic orderId});
 }

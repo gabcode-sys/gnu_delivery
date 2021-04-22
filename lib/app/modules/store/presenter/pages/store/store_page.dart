@@ -439,9 +439,14 @@ class _StorePageState extends ModularState<StorePage, StorePageController> {
                 ),
               ),
             ),
-            onTap: () => Modular.to.pushNamed(
-              "/store_module/cart",
-            ),
+            onTap: () {
+              Map<String, dynamic> cartArguments = new Map<String, dynamic>();
+              cartArguments['restaurantId'] = controller.restaurantId;
+              Modular.to.pushNamed(
+                "/store_module/cart",
+                arguments: cartArguments,
+              );
+            },
           ),
           SpeedDialChild(
             child: Icon(Icons.close),

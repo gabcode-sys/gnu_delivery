@@ -1,17 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:gnu_delivery/app/modules/store/domain/entities/order_info.dart';
+import 'package:gnu_delivery/app/modules/store/infra/models/order_model.dart';
 import 'package:gnu_delivery/app/utils/theme/color_theme.dart';
 
 import 'cart_controller.dart';
 
 class Cart extends StatefulWidget {
+  final Map<String, dynamic> cartParams;
+  Cart({@required this.cartParams});
+
   @override
   _CartState createState() => _CartState();
 }
 
 class _CartState extends ModularState<Cart, CartController> {
   Map<String, Map<String, dynamic>> selectedItems = {};
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<bool> initializeComponents() async {
+    OrderInfo openedOrder = await controller
+        .getOpenedOrder(int.parse(widget.cartParams['restaurantId']));
+
+    bool getCart = await controller.getItemsOfCart(
+        int.parse(widget.cartParams['restaurantId']), openedOrder.orderId);
+    print(getCart);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,92 +80,101 @@ class _CartState extends ModularState<Cart, CartController> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: SafeArea(
-          minimum: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              Text(
-                '4 Itens no carrinho por R\$ 20.00',
-                style: TextStyle(
-                  fontSize: 22.0,
-                  color: UIThemeColors.blackTheme,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Nome do Restaurante',
-                  style: TextStyle(
-                    color: UIThemeColors.greyTheme,
-                    fontSize: 12.0,
+      body: FutureBuilder(
+        future: initializeComponents(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData)
+            return Center(
+              child: const CircularProgressIndicator(strokeWidth: 2.0),
+            );
+          else
+            print(snapshot.data);
+          return SingleChildScrollView(
+            child: SafeArea(
+              minimum: const EdgeInsets.all(20.0),
+              child: Column(
+                children: [
+                  Text(
+                    '4 Itens no carrinho por R\$ 20.00',
+                    style: TextStyle(
+                      fontSize: 22.0,
+                      color: UIThemeColors.blackTheme,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-              ),
-              Divider(
-                color: Colors.grey.shade300,
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                primary: false,
-                itemCount: 4,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    contentPadding: const EdgeInsets.only(
-                      top: 10.0,
-                      bottom: 10.0,
-                    ),
-                    leading: Container(
-                      padding: const EdgeInsets.all(10.0),
-                      height: 60.0,
-                      width: 60.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(14.0),
-                        color: Colors.grey.shade200,
-                      ),
-                      child: CircleAvatar(
-                        backgroundColor: Colors.transparent,
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Nome do Restaurante',
+                      style: TextStyle(
+                        color: UIThemeColors.greyTheme,
+                        fontSize: 12.0,
                       ),
                     ),
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Nome do Produto',
-                          style: TextStyle(
-                            fontSize: 12.0,
-                            color: UIThemeColors.blackTheme,
+                  ),
+                  Divider(
+                    color: Colors.grey.shade300,
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    primary: false,
+                    itemCount: controller.cartItemsInfo.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        contentPadding: const EdgeInsets.only(
+                          top: 10.0,
+                          bottom: 10.0,
+                        ),
+                        leading: Container(
+                          padding: const EdgeInsets.all(10.0),
+                          height: 60.0,
+                          width: 60.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14.0),
+                            color: Colors.grey.shade200,
+                          ),
+                          child: CircleAvatar(
+                            backgroundColor: Colors.transparent,
                           ),
                         ),
-                        Text(
-                          'R\$ 00.00',
-                          style: TextStyle(
-                            color: UIThemeColors.greyTheme,
-                            fontSize: 9.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                    trailing: Container(
-                      width: 110.0,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            color: Colors.grey,
-                            iconSize: 13,
-                            splashRadius: 18,
-                            icon: Icon(
-                              Icons.remove_rounded,
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Nome do Produto',
+                              style: TextStyle(
+                                fontSize: 12.0,
+                                color: UIThemeColors.blackTheme,
+                              ),
                             ),
-                            onPressed: () {
-                              /*
+                            Text(
+                              'R\$ 00.00',
+                              style: TextStyle(
+                                color: UIThemeColors.greyTheme,
+                                fontSize: 9.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                        trailing: Container(
+                          width: 110.0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                color: Colors.grey,
+                                iconSize: 13,
+                                splashRadius: 18,
+                                icon: Icon(
+                                  Icons.remove_rounded,
+                                ),
+                                onPressed: () {
+                                  /*
                               bool existAD = selectedItems.containsKey(
                                   controller.productInfo[index].title);
                               if (!existAD) {
@@ -169,22 +197,22 @@ class _CartState extends ModularState<Cart, CartController> {
 
                               setState(() {});
                               */
-                            },
-                          ),
-                          Text(
-                            selectedItems.containsKey('Product Name')
-                                ? 'R\$ 00.00'
-                                : '0',
-                            style: TextStyle(
-                              fontSize: 12.0,
-                            ),
-                          ),
-                          IconButton(
-                            iconSize: 13,
-                            splashRadius: 18,
-                            icon: Icon(Icons.add_rounded),
-                            onPressed: () {
-                              /*bool existAD = selectedItems.containsKey(
+                                },
+                              ),
+                              Text(
+                                selectedItems.containsKey('Product Name')
+                                    ? 'R\$ 00.00'
+                                    : '0',
+                                style: TextStyle(
+                                  fontSize: 12.0,
+                                ),
+                              ),
+                              IconButton(
+                                iconSize: 13,
+                                splashRadius: 18,
+                                icon: Icon(Icons.add_rounded),
+                                onPressed: () {
+                                  /*bool existAD = selectedItems.containsKey(
                                   controller.productInfo[index].title);
                               if (!existAD) {
                                 selectedItems.addAll({
@@ -208,45 +236,47 @@ class _CartState extends ModularState<Cart, CartController> {
 
                               setState(() {});
                               */
-                            },
+                                },
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              Divider(
-                color: Colors.grey.shade300,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Entrega',
-                    style: TextStyle(
-                      fontSize: 12.0,
-                      color: UIThemeColors.blackTheme,
-                    ),
+                        ),
+                      );
+                    },
                   ),
-                  Text(
-                    'Grátis',
-                    style: TextStyle(
-                      color: UIThemeColors.orangeTheme,
-                      fontSize: 12.0,
-                    ),
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  Divider(
+                    color: Colors.grey.shade300,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Entrega',
+                        style: TextStyle(
+                          fontSize: 12.0,
+                          color: UIThemeColors.blackTheme,
+                        ),
+                      ),
+                      Text(
+                        'Grátis',
+                        style: TextStyle(
+                          color: UIThemeColors.orangeTheme,
+                          fontSize: 12.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 200.0,
                   ),
                 ],
               ),
-              SizedBox(
-                height: 200.0,
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
       bottomSheet: Container(
         padding: const EdgeInsets.only(

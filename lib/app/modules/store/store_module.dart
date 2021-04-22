@@ -1,5 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:gnu_delivery/app/modules/store/domain/usecases/create_new_order_item.dart';
+import 'package:gnu_delivery/app/modules/store/domain/usecases/get_items_of_cart.dart';
 import 'package:gnu_delivery/app/modules/store/domain/usecases/get_opened_order.dart';
 import 'package:gnu_delivery/app/modules/store/domain/usecases/get_product_aditionals.dart';
 import 'package:gnu_delivery/app/modules/store/domain/usecases/search_product_by_id.dart';
@@ -38,6 +39,7 @@ class StoreModule extends ChildModule {
         $CreateNewOrderImpl,
         $GetOpenedOrderImpl,
         $CreateNewOrderItemImpl,
+        $GetItemsOfCartImpl,
         $ConnectivityServiceImpl,
         $FlutterConnectivityDriver,
       ];
@@ -51,7 +53,7 @@ class StoreModule extends ChildModule {
         ),
         ModularRouter(
           "/cart",
-          child: (context, args) => Cart(),
+          child: (context, args) => Cart(cartParams: args.data),
         ),
       ];
 }

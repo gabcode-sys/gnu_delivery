@@ -273,4 +273,42 @@ class FirebaseDataSourceImpl implements RestaurantDataSource {
       observation: observation,
     );
   }
+
+  @override
+  Future<List<OrderItemModel>> getItemsOfCart(
+      {int restaurantId, dynamic userId, dynamic orderId}) async {
+    List<OrderItemModel> cartItemsList = new List();
+
+    QuerySnapshot documents = await Future.value(FirebaseFirestore.instance
+        .collection('restaurants')
+        .doc(restaurantId.toString())
+        .collection('orders')
+        .doc(orderId)
+        .collection('items')
+        .get());
+
+    documents.docs
+        .map((DocumentSnapshot documentSnapshot) => documentSnapshot)
+        .forEach((doc) {
+      //print(doc.get('aditionals'));
+      Map<String, dynamic> teste = doc.get('aditionals');
+      print(teste);
+      cartItemsList.add(
+        OrderItemModel(
+          count: doc.get('count'),
+          itemId: doc.get('item_id'),
+          orderId: doc.get('order_id'),
+          productId: doc.get('product_id'),
+          restaurantId: doc.get('restaurant_id'),
+          type: doc.get('type'),
+          userId: doc.get('user_id'),
+          aditionals: doc.get('aditionals'),
+          name: doc.get('name'),
+          observation: doc.get('observation'),
+        ),
+      );
+    });
+
+    return cartItemsList;
+  }
 }

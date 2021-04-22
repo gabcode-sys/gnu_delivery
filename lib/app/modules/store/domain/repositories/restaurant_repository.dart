@@ -34,4 +34,6 @@ abstract class RestaurantRepository {
     Map<String, Map<String, dynamic>> aditionals,
     String observation,
   });
+  Future<Either<Failure, List<OrderItemInfo>>> getItemsOfCart(
+      {int restaurantId, dynamic userId, dynamic orderId});
 }
