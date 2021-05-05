@@ -29,7 +29,7 @@ class _CartState extends ModularState<Cart, CartController> {
 
     bool getCart = await controller.getItemsOfCart(
         int.parse(widget.cartParams['restaurantId']), openedOrder.orderId);
-    print(getCart);
+    return true;
   }
 
   @override
@@ -95,7 +95,7 @@ class _CartState extends ModularState<Cart, CartController> {
               child: Column(
                 children: [
                   Text(
-                    '4 Itens no carrinho por R\$ 20.00',
+                    '${controller.cartItemsInfo.length} Itens no carrinho por R\$ 20.00',
                     style: TextStyle(
                       fontSize: 22.0,
                       color: UIThemeColors.blackTheme,
@@ -145,14 +145,14 @@ class _CartState extends ModularState<Cart, CartController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Nome do Produto',
+                              controller.cartItemsInfo[index].name,
                               style: TextStyle(
                                 fontSize: 12.0,
                                 color: UIThemeColors.blackTheme,
                               ),
                             ),
                             Text(
-                              'R\$ 00.00',
+                              'R\$0.00',
                               style: TextStyle(
                                 color: UIThemeColors.greyTheme,
                                 fontSize: 9.0,
@@ -174,34 +174,36 @@ class _CartState extends ModularState<Cart, CartController> {
                                   Icons.remove_rounded,
                                 ),
                                 onPressed: () {
-                                  /*
-                              bool existAD = selectedItems.containsKey(
-                                  controller.productInfo[index].title);
-                              if (!existAD) {
-                                selectedItems.addAll({
-                                  controller.productInfo[index].title: {
-                                    'qtd': 1,
+                                  bool existAD = selectedItems.containsKey(
+                                      controller.cartItemsInfo[index].itemId);
+                                  if (!existAD) {
+                                    selectedItems.addAll({
+                                      controller.cartItemsInfo[index].itemId: {
+                                        'qtd': 1,
+                                      }
+                                    });
+                                  } else {
+                                    if (selectedItems[controller
+                                            .cartItemsInfo[index]
+                                            .itemId]['qtd'] >
+                                        0) {
+                                      selectedItems[controller
+                                              .cartItemsInfo[index].itemId]
+                                          .update('qtd', (value) {
+                                        return value - 1;
+                                      });
+                                    }
                                   }
-                                });
-                              } else {
-                                if (selectedItems[controller
-                                        .productInfo[index].title]['qtd'] >
-                                    0) {
-                                  selectedItems[
-                                          controller.productInfo[index].title]
-                                      .update('qtd', (value) {
-                                    return value - 1;
-                                  });
-                                }
-                              }
 
-                              setState(() {});
-                              */
+                                  setState(() {});
                                 },
                               ),
                               Text(
-                                selectedItems.containsKey('Product Name')
-                                    ? 'R\$ 00.00'
+                                selectedItems.containsKey(
+                                        controller.cartItemsInfo[index].itemId)
+                                    ? selectedItems[controller
+                                            .cartItemsInfo[index].itemId]['qtd']
+                                        .toString()
                                     : '0',
                                 style: TextStyle(
                                   fontSize: 12.0,
@@ -212,30 +214,23 @@ class _CartState extends ModularState<Cart, CartController> {
                                 splashRadius: 18,
                                 icon: Icon(Icons.add_rounded),
                                 onPressed: () {
-                                  /*bool existAD = selectedItems.containsKey(
-                                  controller.productInfo[index].title);
-                              if (!existAD) {
-                                selectedItems.addAll({
-                                  controller.productInfo[index].title: {
-                                    'qtd': 1,
+                                  bool existAD = selectedItems.containsKey(
+                                      controller.cartItemsInfo[index].itemId);
+                                  if (!existAD) {
+                                    selectedItems.addAll({
+                                      controller.cartItemsInfo[index].itemId: {
+                                        'qtd': 1,
+                                      }
+                                    });
+                                  } else {
+                                    selectedItems[controller
+                                            .cartItemsInfo[index].itemId]
+                                        .update('qtd', (value) {
+                                      return value + 1;
+                                    });
                                   }
-                                });
-                              } else {
-                                if (selectedItems[controller
-                                        .productInfo[index]
-                                        .title]['qtd'] <
-                                    controller
-                                        .productInfo[index].maxCount) {
-                                  selectedItems[controller
-                                          .productInfo[index].title]
-                                      .update('qtd', (value) {
-                                    return value + 1;
-                                  });
-                                }
-                              }
 
-                              setState(() {});
-                              */
+                                  setState(() {});
                                 },
                               ),
                             ],

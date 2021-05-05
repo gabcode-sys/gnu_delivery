@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:gnu_delivery/app/modules/store/infra/datasources/restaurant_datasource.dart';
@@ -8,6 +9,7 @@ import 'package:gnu_delivery/app/modules/store/infra/models/product_aditional_mo
 import 'package:gnu_delivery/app/modules/store/infra/models/product_category_model.dart';
 import 'package:gnu_delivery/app/modules/store/infra/models/product_model.dart';
 import 'package:gnu_delivery/app/modules/store/infra/models/restaurant_model.dart';
+import 'dart:convert';
 
 part 'firebase_datasource.g.dart';
 
@@ -290,9 +292,6 @@ class FirebaseDataSourceImpl implements RestaurantDataSource {
     documents.docs
         .map((DocumentSnapshot documentSnapshot) => documentSnapshot)
         .forEach((doc) {
-      //print(doc.get('aditionals'));
-      Map<String, dynamic> teste = doc.get('aditionals');
-      print(teste);
       cartItemsList.add(
         OrderItemModel(
           count: doc.get('count'),
@@ -302,7 +301,7 @@ class FirebaseDataSourceImpl implements RestaurantDataSource {
           restaurantId: doc.get('restaurant_id'),
           type: doc.get('type'),
           userId: doc.get('user_id'),
-          aditionals: doc.get('aditionals'),
+          aditionals: HashMap.from(doc.get('aditionals')),
           name: doc.get('name'),
           observation: doc.get('observation'),
         ),
